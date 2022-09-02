@@ -5,6 +5,7 @@
 # pip install selenium
 
 import time
+from urllib import request
 import requests
 import pandas as pd
 import json
@@ -36,22 +37,34 @@ xPathEmail = "/html/body/div/div/div/div[1]/div/div/div/div/div/div/div[2]/div[2
 xPathAvancar = "/html/body/div/div/div/div[1]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/div/div[6]/div"
 xPathSenha = "/html/body/div/div/div/div[1]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div/div[3]/div/label/div/div[2]/div[1]/input"
 xPathEntrar = "/html/body/div/div/div/div[1]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div[1]/div/div/div/div"
+xPathValidaNomeCelular = "/html/body/div/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/label/div/div[2]/div"
 
-time.sleep(10)
+time.sleep(3)
 try:
-    
+
     driver.find_element(By.XPATH, xPathEmail).send_keys(credenciais['email'])
-    time.sleep(5)
-    
+    time.sleep(2)
     driver.find_element(By.XPATH, xPathAvancar).click()
-    time.sleep(5)
-    
+    time.sleep(2)
+
+    driver.find_element(By.XPATH, xPathValidaNomeCelular).send_keys(credenciais['nome'])
+    time.sleep(2)
+    driver.find_element(By.XPATH, xPathAvancar).click()
+    time.sleep(2)
+        
     driver.find_element(By.XPATH, xPathSenha).send_keys(credenciais['senha'])
-    time.sleep(5)
-    
+    time.sleep(2)
     driver.find_element(By.XPATH, xPathEntrar).click()
-    time.sleep(10)
-    
+    time.sleep(2)
+
+
+
+
+    teste = requests.get('https://twitter.com/home');
+    print(teste)
+
+    time.sleep(1000)
+
     print("logado com sucesso!")
 except Exception as e:
     driver.quit()

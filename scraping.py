@@ -5,12 +5,16 @@
 # pip install selenium
 
 from faulthandler import is_enabled
+from itertools import count
 from multiprocessing.util import is_exiting
 import time
+from tokenize import Double
 from urllib import request
 import requests
 import pandas as pd
 import json
+import csv
+import os
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -29,7 +33,7 @@ def is_element_present(how, what):
     return True 
 
 # leitura dos dados do json
-with open("credenciais.json", encoding='utf-8') as jsonCredenciais:
+with open("credenciais-exemplo.json", encoding='utf-8') as jsonCredenciais:
     credenciais = json.load(jsonCredenciais)
 
 # url da página de login do twitter
@@ -40,6 +44,10 @@ options = Options()
 options.headless = True # exibe o navegador
 service = Service(executable_path = "geckodriver-v0.31.0-win64\geckodriver.exe") # executavel do geckdriver
 driver = webdriver.Firefox(service = service) 
+
+#names = []
+tweets = []
+
 
 # abre pagina 
 driver.get(urlTwitter)
@@ -103,10 +111,26 @@ def search(name):
     except Exception as e:
         driver.quit()
         print(e)
-    
 
+    
 if login():
     search('Bolsonaro')
+    
+    articles = driver.find_elements(By.XPATH, '//article[@data-testid="tweet"]')
+    for i in range(50):
+        
+        tweet = driver.find_element(By.XPATH, '//div[@data-testid="tweetText"]').text
+        tweets.append(tweet)
+
+        driver.execute_script('window.scrollTo(0,document.body.scrollHeight);')
+        time.sleep(6)
+
+df = pd.DataFrame(zip(tweets),columns=['Tweets'])
+
+df.head()
+
+df.to_csv(r"C:\Users\rafael.lopes\Desktop\faesa\\tweets_scrapping.csv",index=False)
+
 
 time.sleep(2)
 driver.quit()

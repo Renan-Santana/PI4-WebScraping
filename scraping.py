@@ -12,6 +12,9 @@ from tokenize import Double
 from urllib import request
 import requests
 import pandas as pd
+import heapq
+import numpy as np
+import re
 import json
 import csv
 import os
@@ -115,38 +118,93 @@ def search(name):
         driver.quit()
         print(e)
 
-def term_frequency (dataset):
+def limpeza_dados (dataset):
 
-        matriz_tf = {}
+	# Para dividir um texto em frases *caso precise*: dataset = nltk.sent_tokenize(texto)
 
-        for palavra in palavras_frequentes:
-                documento_tf = []
+	for contador in range (len(dataset)):
 
-                for dados in dataset:
-                        frequencia = 0
+		# Converte todas as palavras para para minúsculo.
+    	dataset[contador] = dataset[contador].lower()
 
-                        for contador in nltk.word_tokenize(dados):
-                                if contador == palavra:
-                                        frequencia += 1
+		# Converte tudo que não seja uma palavra (exemplo: pontuação) para um espaço simples.
+		dataset[contador] = re.sub(r'W', ' ', dataset[contador])
 
-                        palavra_tf = frequencia/len(nltk.word_tokenize(dados))
-                        documento_tf.append(palavra_tf)
+		# Converte todas as quebras de linha para um espaço simples.
+		dataset[contador] = re.sub(r's+', ' ', dataset[contador])
 
-                matriz_tf[palavra] = documento_tf
+def repeticao_palavras (dataset):
+	
+	contador_palavras = {}
+	
+	for dados in dataset:
+    	palavras_tokenizadas = nltk.word_tokenize(dados)
+    	
+		for palavra word in palavras_tokenizadas:
 
-        print (matriz_tf)
-        return matriz_tf
+			if palavra not in contador_palavras.keys():
+        	    contador_palavras[palavra] = 1
+        	else:
+            	contador_palavras[palavra] += 1
+	
+	palavras_frequentes = heapq.nlargest(50,contador_palavras, key=palavras_frequentes.get)
+            
+	return palavras_frequentes
+
+def tf (dataset):
+
+	palavras_frequentes = repeticao_palavras(dataset)
+	matriz_tf = {}
+
+	for palavra in palavras_frequentes:
+    		documento_tf = []
+
+		for dados in dataset:
+        		frequencia = 0
+
+			for contador in nltk.word_tokenize(dados):
+            			if contador == palavra:
+                			frequencia += 1
+
+			palavra_tf = frequencia/len(nltk.word_tokenize(dados))
+        		documento_tf.append(palavra_tf)
+
+    		matriz_tf[palavra] = documento_tf
+
+	print (matriz_tf)
+	return matriz_tf
+
+def idf (dataset):
+
+	idfs_palavras = {}
+	palavras_frequentes = repeticao_palavras(dataset)
+
+	for palavra in palavras_frequentes:
+	    contador_documento = 0
+
+	    for dados in dataset:
+	        if word in nltk.word_tokenize(dados):
+	            contador_documento += 1
+	    idfs_palavras[palavra] = np.log((len(dataset)/contador_documento)+1)
+    
+	print (idfs_palavras)
+	return idfs_palavras
 
 def tf_idf (dataset):
 
-        vetorizador_tf_idf = TfidfVectorizer(use_idf=True)
-        vetor_tf_idf = vetorizador_tf_idf.fit_transform(dataset)
+	tf = tf(dataset)
+	idf = idf(dataset)
+	matriz_tf_idf = []
 
-        resultado_tf_idf = pd.DataFrame(vetor_tf_idf[0].T.todense(), index=vetorizador_tf_idf.get_feature_names(), columns=['Tweets'])
-        resultado_tf_idf = resultado_tf_idf.sort_values('TF-IDF', ascending=False)
-
-        print (resultado_tf_idf.head(25))
-        return resultado_tf_idf
+	for palavra in matriz_tf_idf.keys():
+	    tf_idf = []
+	    
+		for valor in tf[palavra]:
+	        pontuacao = valor * idf[palavra]
+	        tf_idf.append(pontuacao)
+	    matriz_tf_idf.append(tf_idf)
+    
+	print (matriz_tf_idf)
 
     
 if login():

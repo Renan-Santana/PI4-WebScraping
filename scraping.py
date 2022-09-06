@@ -115,9 +115,42 @@ def search(name):
         driver.quit()
         print(e)
 
+def term_frequency (dataset):
+
+        matriz_tf = {}
+
+        for palavra in palavras_frequentes:
+                documento_tf = []
+
+                for dados in dataset:
+                        frequencia = 0
+
+                        for contador in nltk.word_tokenize(dados):
+                                if contador == palavra:
+                                        frequencia += 1
+
+                        palavra_tf = frequencia/len(nltk.word_tokenize(dados))
+                        documento_tf.append(palavra_tf)
+
+                matriz_tf[palavra] = documento_tf
+
+        print (matriz_tf)
+        return matriz_tf
+
+def tf_idf (dataset):
+
+        vetorizador_tf_idf = TfidfVectorizer(use_idf=True)
+        vetor_tf_idf = vetorizador_tf_idf.fit_transform(dataset)
+
+        resultado_tf_idf = pd.DataFrame(vetor_tf_idf[0].T.todense(), index=vetorizador_tf_idf.get_feature_names(), columns=['Tweets'])
+        resultado_tf_idf = resultado_tf_idf.sort_values('TF-IDF', ascending=False)
+
+        print (resultado_tf_idf.head(25))
+        return resultado_tf_idf
+
     
 if login():
-    search('Bolsonaro')
+    search('Bolsonaro OR Lula')
     
     articles = driver.find_elements(By.XPATH, '//article[@data-testid="tweet"]')
     for i in range(50):
@@ -132,42 +165,10 @@ df = pd.DataFrame(zip(tweets),columns=['Tweets'])
 
 df.head()
 
-df.to_csv(r"C:\Users\rafael.lopes\Desktop\faesa\\tweets_scrapping.csv",index=False)
+df.to_csv(r".\tweets_scrapping.csv",index=False)
 
-def term_frequency (dataset):
-
-        matriz_tf = {}
-
-        for palavra in palavras_frequentes:
-                documento_tf = []
-
-                for dados in dataset:
-                        frequencia = 0
-
-                        for contador in nltk.word_tokenize(data):
-                                if contador == palavra:
-                                        frequencia += 1
-
-                        palavra_tf = frequencia/len(nltk.word_tokenize(data))
-                        documento_tf.append(palavra_tf)
-
-                matriz_tf[palavra] = documento_tf
-
-        print (matriz_tf)
-        return matriz_tf
-
-def tf_idf (dataset):
-
-        vetorizador_tf_idf = TfidfVectorizer(use_idf=True)
-        vetor_tf_idf = vetorizador_tf_idf.fit_transform(dataset)
-
-        resultado_tf_idf = pd.DataFrame(vetor_tf_idf[0].T.todense(), index=vetorizador_tf_idf.get_feature_names(), column>
-        resultado_tf_idf = resultado_tf_idf.sort_values('TF-IDF', ascending=False)
-
-        print (resultado_tf_idf.head(25))
-        return resultado_tf_idf
-
-
+term_frequency(df)
+tf_idf (df)
 
 time.sleep(2)
 driver.quit()

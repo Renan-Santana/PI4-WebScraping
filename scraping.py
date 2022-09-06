@@ -24,6 +24,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 
+from sklearn.feature_extraction.text import TfidfTransformer
+import nltk
+
 # funcao para verificar se elemento existe na DOM
 def is_element_present(how, what):     
     try:         
@@ -130,6 +133,40 @@ df = pd.DataFrame(zip(tweets),columns=['Tweets'])
 df.head()
 
 df.to_csv(r"C:\Users\rafael.lopes\Desktop\faesa\\tweets_scrapping.csv",index=False)
+
+def term_frequency (dataset):
+
+        matriz_tf = {}
+
+        for palavra in palavras_frequentes:
+                documento_tf = []
+
+                for dados in dataset:
+                        frequencia = 0
+
+                        for contador in nltk.word_tokenize(data):
+                                if contador == palavra:
+                                        frequencia += 1
+
+                        palavra_tf = frequencia/len(nltk.word_tokenize(data))
+                        documento_tf.append(palavra_tf)
+
+                matriz_tf[palavra] = documento_tf
+
+        print (matriz_tf)
+        return matriz_tf
+
+def tf_idf (dataset):
+
+        vetorizador_tf_idf = TfidfVectorizer(use_idf=True)
+        vetor_tf_idf = vetorizador_tf_idf.fit_transform(dataset)
+
+        resultado_tf_idf = pd.DataFrame(vetor_tf_idf[0].T.todense(), index=vetorizador_tf_idf.get_feature_names(), column>
+        resultado_tf_idf = resultado_tf_idf.sort_values('TF-IDF', ascending=False)
+
+        print (resultado_tf_idf.head(25))
+        return resultado_tf_idf
+
 
 
 time.sleep(2)

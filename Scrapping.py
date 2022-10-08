@@ -119,8 +119,8 @@ if login():
         driver.execute_script('window.scrollTo(0,document.body.scrollHeight);')
         time.sleep(6)
 
-
-DataFrame.cria_df(tweets)
+df = pd.DataFrame(zip(tweets),columns=['Tweets'])
+df.to_csv(r".\tweets_scrapping.csv",index=False)
 
 time.sleep(2)
 driver.quit()

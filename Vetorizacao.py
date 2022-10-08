@@ -2,12 +2,13 @@ import pandas as pd
 import heapq
 import numpy as np
 import nltk
+import DataFrame
 
-def repeticao_palavras(dfString):
+def repeticao_palavras(tweets_limpos):
 	contador_palavras = {}
- 
-	for dados in dfString:
-            # dados = dfString[dados]
+
+	for dados in tweets_limpos:
+        # dados = dfString[dados]
             palavras_tokenizadas = nltk.word_tokenize(dados)
             for palavra in palavras_tokenizadas:
                 if palavra not in contador_palavras.keys():
@@ -16,13 +17,14 @@ def repeticao_palavras(dfString):
                     contador_palavras[palavra] += 1
             palavras_repetidas = heapq.nlargest(50,contador_palavras, key=contador_palavras.get)
             return palavras_repetidas
+    
 
-def tf(dfString):
-    palavras_frequentes = repeticao_palavras(dfString)
+def tf(tweets_limpos):
+    palavras_frequentes = repeticao_palavras(tweets_limpos)
     matriz_tf = {}
     for palavra in palavras_frequentes:
             documento_tf = []
-            for dados2 in dfString:
+            for dados2 in tweets_limpos:
                     frequencia = 0
                     palavras_tokenizadas = nltk.word_tokenize(dados2)
                     for contador in palavras_tokenizadas:
@@ -60,5 +62,5 @@ def tf_idf(dfString):
             matriz_tf_idf.append(tf_idf)
             print (matriz_tf_idf)
 
-def repeticao (dfString):
-    print(tf(dfString))
+tweets_limpos = DataFrame.cria_df()
+print(repeticao_palavras(tweets_limpos))

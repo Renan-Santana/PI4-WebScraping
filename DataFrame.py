@@ -1,28 +1,31 @@
 import pandas as pd
 import re
 import nltk
-import Vetorizacao
 
-def limpeza_dados(dataset, tweets):
+def limpeza_dados(dataset):
 	# Para dividir um texto em frases *caso precise*: dataset = nltk.sent_tokenize(texto)
-    dataset = nltk.sent_tokenize(tweets)
+    # dataset = nltk.sent_tokenize(tweets)
+
+    df_limpo = []
+    auxiliar = " "
 
     for contador in range(len(dataset)):
-            # Converte todas as palavras para minúsculo.
-            dataset[contador] = dataset[contador].lower()
 
-            # Converte tudo que não seja uma palavra (exemplo: Pontuação) para um espaço simples.
-            dataset[contador] = re.sub(r'W', ' ', dataset[contador])
+        # Converte todas as palavras para minúsculo.
+        auxiliar = dataset[contador].lower()
+        
+        # Converte tudo que não seja uma palavra (exemplo: Pontuação) para um espaço simples.
+        auxiliar = re.sub(r'W', ' ', auxiliar)
 
-            # Converte todas as quebras de linha para um espaço simples.
-            dataset[contador] = re.sub(r's+', ' ', dataset[contador])
+        # Converte todas as quebras de linha para um espaço simples.
+        auxiliar = re.sub(r'\r\n', ' ', auxiliar)
 
-def cria_df(tweets):
-    df = pd.DataFrame(zip(tweets),columns=['Tweets'])
-    print(df.head())
+        # Inserção na lista limpa.
+        df_limpo.append(auxiliar)
+        
+    return df_limpo
+
+def cria_df():
+    df = pd.read_csv('tweets_scrapping.csv')
     dfString = df['Tweets'].values.tolist()
-    #limpeza_dados(dfString, tweets)
-    df.to_csv(r".\tweets_scrapping.csv",index=False)
-    df.head()
-    Vetorizacao.repeticao(dfString)
-
+    return limpeza_dados(dfString)

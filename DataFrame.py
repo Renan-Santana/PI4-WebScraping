@@ -3,8 +3,6 @@ import re
 import nltk
 
 def limpeza_dados(dataset):
-	# Para dividir um texto em frases *caso precise*: dataset = nltk.sent_tokenize(texto)
-    # dataset = nltk.sent_tokenize(tweets)
 
     df_limpo = []
     auxiliar = " "
@@ -19,6 +17,11 @@ def limpeza_dados(dataset):
 
         # Converte todas as quebras de linha para um espaço simples.
         auxiliar = re.sub(r'\r\n', ' ', auxiliar)
+
+        # Converte todos os caracteres especiais para um espaço simples.
+        caracteres_especiais = [';', ':', '!', '?', '*', '.', ',', '@', '#', '$', '(', ')', '[', ']', '{','}']
+        for caracter in caracteres_especiais: 
+            auxiliar = auxiliar.replace(caracter, ' ')
 
         # Inserção na lista limpa.
         df_limpo.append(auxiliar)

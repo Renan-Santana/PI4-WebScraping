@@ -108,10 +108,10 @@ def search(name):
         print(e)
     
 if login():
-    search('Eleições 2022')
+    search('Eleições 2022 OR Eleições OR Eleicoes OR PT OR PL OR PDT OR Jair OR Bolsonaro OR Lula OR PDT OR Ciro OR MDB OR Simone OR Simone Tebet OR Tebet OR Padre Kelmon OR NOVO OR Felipe Avila')
     
     articles = driver.find_elements(By.XPATH, '//article[@data-testid="tweet"]')
-    for i in range(10000):
+    for i in range(100_000):
         
         tweet = driver.find_element(By.XPATH, '//div[@data-testid="tweetText"]').text
         tweets.append(tweet)

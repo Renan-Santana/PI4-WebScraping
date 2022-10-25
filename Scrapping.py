@@ -1,17 +1,23 @@
-import pandas as pd
+import csv
+import json
+import os
+import time
+
 import numpy as np
-import csv, os, json, requests, time
-import DataFrame
+import pandas as pd
+import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from selenium.webdriver.firefox.service import Service
-from selenium.webdriver.firefox.options import Options
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoSuchElementException
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfTransformer
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.service import Service
+from sklearn.feature_extraction.text import (CountVectorizer, TfidfTransformer,
+                                             TfidfVectorizer)
+
+import DataFrame
+
 
 # Função para verificar se o elemento existe na DOM.
 def is_element_present(how, what):

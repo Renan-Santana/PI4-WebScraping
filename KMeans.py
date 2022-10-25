@@ -4,19 +4,19 @@
 # pip install matplotlib
 # pip install sklearn
 
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 from matplotlib import pylab
+from scipy.spatial.distance import cdist, pdist
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
-from sklearn.model_selection import train_test_split
-from scipy.spatial.distance import cdist, pdist
 from sklearn.metrics import silhouette_score
+from sklearn.model_selection import train_test_split
 from sklearn.semi_supervised import LabelSpreading
 
 # Pré processamento dos dados
-dataset_vetorizado = pd.read_csv('tweets_scrapping.csv', #passar path correto do dataset_vetorizado.csv
+dataset_vetorizado = pd.read_csv('vetorizacao_tf_idf.csv', #passar path correto do dataset_vetorizado.csv
                                 #delimiter = ';', 
                                 low_memory = False)
 
@@ -32,16 +32,16 @@ tweets_array = dataset_vetorizado.values
 k_means = KMeans(n_clusters = 3).fit(tweets_array)
 
 # Metricas
-centroids = k_means.cluster_centers # ajustando centroids
+centroids = k_means.cluster_centers_ # ajustando centroids
 
-k_euclid = [cdist(tweets_array, cent, 'euclidean') for cent in centroids] # calculando a distandcia euclidiana de cada ponto dado o centroid
+k_euclid = [cdist(tweets_array, centroids, 'euclidean') for cent in centroids] # calculando a distandcia euclidiana de cada ponto dado o centroid
 dist = [np.min(k, axis = 1) for k in k_euclid]
 
 soma_quadrado_clusters = [sum(d**2 for d in dist)] # soma dos quadrados das distancias
 
 soma_total = sum(pdist(tweets_array)**2)/tweets_array.shape[0] # soma toal dos quadrados
 
-soma_quadrado_entre_clusters = soma_total - soma_quadrado_entre_clusters # soma dos quadrados entre os cluster
+soma_quadrado_entre_clusters = soma_total - soma_quadrado_clusters # soma dos quadrados entre os cluster
 
 # Curva de Elbow
 fig = plt.figure()
@@ -63,6 +63,6 @@ dataset_clusters = pd.DataFrame(dataset_vetorizado, columns = ['Tweets'])
 dataset_clusters['Cluster'] = labels
 
 # Gerando csv dos tweets e seus respectivos cluster
-dataset_clusters.to_csv('tweets_clusters.csv', index = True)
+dataset_clusters.to_csv('tweets_clusters131231312.csv', index = True)
 
 

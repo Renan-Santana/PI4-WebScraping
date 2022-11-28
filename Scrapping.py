@@ -2,10 +2,10 @@ import csv
 import json
 import os
 import time
-
 import numpy as np
 import pandas as pd
 import requests
+import DataFrame
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
@@ -13,111 +13,115 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
-from sklearn.feature_extraction.text import (CountVectorizer, TfidfTransformer,
-                                             TfidfVectorizer)
-
-import DataFrame
-
+from sklearn.feature_extraction.text import (CountVectorizer, TfidfTransformer, TfidfVectorizer)
 
 # Função para verificar se o elemento existe na DOM.
-def is_element_present(how, what):
+def elemento_presente(como, oque):
+
     try:
-        driver.find_element(by=how, value=what)
-    except NoSuchElementException as e:
+        driver.find_element(by = como, value = oque)
+    
+    except NoSuchElementException as excessao:
         return False
+    
     return True
 
 
 # Leitura dos dados do JSON.
-with open("credenciais-exemplo.json", encoding='utf-8') as jsonCredenciais:
+with open("credenciais.json", encoding='utf-8') as jsonCredenciais:
     credenciais = json.load(jsonCredenciais)
 
 # URL da página de login do Twitter.
-urlTwitter = "https://twitter.com/i/flow/login"
+url_twitter = "https://twitter.com/i/flow/login"
 
 # Cria uma nova instância do Firefox.
-options = Options()
-options.headless = True  # Exibe o navegador.
+opcoes = Options()
+opcoes.headless = True  # Exibe o navegador.
 
 # Executável do Geckodriver.
-service = Service(executable_path="geckodriver-v0.31.0-win64\geckodriver.exe")
-driver = webdriver.Firefox(service=service)
+servico = Service(executable_path="geckodriver-v0.31.0-win64\geckodriver.exe")
+driver = webdriver.Firefox(service=servico)
 
 tweets = []
 
 # Abre uma nova página.
-driver.get(urlTwitter)
+driver.get(url_twitter)
 
 
 def login():
+
     # Atribuição de valores da primeira tela.
-    xPathEmail = "/html/body/div/div/div/div[1]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/div/div[5]/label/div/div[2]/div/input"
-    xPathAvancar = "/html/body/div/div/div/div[1]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/div/div[6]/div"
+    xpath_email = "/html/body/div/div/div/div[1]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/div/div[5]/label/div/div[2]/div/input"
+    xpath_avancar = "/html/body/div/div/div/div[1]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/div/div[6]/div"
 
     # Atribuição de valores da segunda tela.
-    xPathValidaNomeCelular = "/html/body/div/div/div/div[1]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/label/div/div[2]/div/input"
-    xPathAvancarUsuario = "/html/body/div/div/div/div[1]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div/div"
+    xpath_valida_nomecelular = "/html/body/div/div/div/div[1]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/label/div/div[2]/div/input"
+    xpath_avancarusuario = "/html/body/div/div/div/div[1]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div/div"
 
     # Atribuição de valores da terceira tela.
-    xPathSenha = "/html/body/div/div/div/div[1]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div/div[3]/div/label/div/div[2]/div[1]/input"
-    xPathEntrar = "/html/body/div/div/div/div[1]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div[1]/div/div/div/div"
+    xpath_senha = "/html/body/div/div/div/div[1]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div/div[3]/div/label/div/div[2]/div[1]/input"
+    xpath_entrar = "/html/body/div/div/div/div[1]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div[1]/div/div/div/div"
 
     time.sleep(3)
 
     # Inicia um novo login.
     try:
-        driver.find_element(By.XPATH, xPathEmail).send_keys(
-            credenciais['email'])
+
+        driver.find_element(By.XPATH, xpath_email).send_keys(credenciais['email'])
         time.sleep(2)
 
-        driver.find_element(By.XPATH, xPathAvancar).click()
+        driver.find_element(By.XPATH, xpath_avancar).click()
         time.sleep(2)
 
         # Verifica se o elemento de verificação de usuario existe.
-        if is_element_present('xpath', xPathValidaNomeCelular):
-            driver.find_element(By.XPATH, xPathValidaNomeCelular).send_keys(
-                credenciais['nome'])
+        if elemento_presente('xpath', xpath_valida_nomecelular):
+
+            driver.find_element(By.XPATH, xpath_valida_nomecelular).send_keys(credenciais['nome'])
             time.sleep(2)
 
-            driver.find_element(By.XPATH, xPathAvancarUsuario).click()
+            driver.find_element(By.XPATH, xpath_avancarusuario).click()
             time.sleep(2)
 
-        driver.find_element(By.XPATH, xPathSenha).send_keys(
-            credenciais['senha'])
+        driver.find_element(By.XPATH, xpath_senha).send_keys(credenciais['senha'])
         time.sleep(2)
 
-        driver.find_element(By.XPATH, xPathEntrar).click()
+        driver.find_element(By.XPATH, xpath_entrar).click()
         time.sleep(2)
-    except Exception as e:
+
+    except Exception as excessao:
+
         driver.quit()
-        print(e)
+        print(excessao)
         return False
+
     return True
 
 
-def search(name):
+def search(nome):
+
     # Atribuição de valores.
-    xPathSearchTwitter = "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[2]/div/div[2]/div/div/div/div[1]/div/div/div/form/div[1]/div/div/div/label/div[2]/div/input"
-    XPathLasted = "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[1]/div[1]/div[2]/nav/div/div[2]/div/div[2]/a/div/span"
+    xpath_pesquisa_twitter = "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[2]/div/div[2]/div/div/div/div[1]/div/div/div/form/div[1]/div/div/div/label/div[2]/div/input"
+    xpath_lasted = "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[1]/div[1]/div[2]/nav/div/div[2]/div/div[2]/a/div/span"
 
     try:
-        driver.find_element(By.XPATH, xPathSearchTwitter).send_keys(name)
+
+        driver.find_element(By.XPATH, xpath_pesquisa_twitter).send_keys(nome)
         time.sleep(2)
 
-        driver.find_element(By.XPATH, xPathSearchTwitter).send_keys(Keys.ENTER)
+        driver.find_element(By.XPATH, xpath_pesquisa_twitter).send_keys(Keys.ENTER)
         time.sleep(2)
 
-##        driver.find_element(By.XPATH, XPathLasted).click()
-#        time.sleep(5)
+        driver.find_element(By.XPATH, XPathLasted).click()
+        time.sleep(2)
     except Exception as e:
         driver.quit()
         print(e)
     
 if login():
-    search('Bolsonaro OR Lula OR Bolsonaro 22')
+    search('Eleições 2022 OR Eleições OR Eleicoes OR PT OR PL OR PDT OR Jair OR Bolsonaro OR Lula OR PDT OR Ciro OR MDB OR Simone OR Simone Tebet OR Tebet OR Padre Kelmon OR NOVO OR Felipe Avila')
     
     articles = driver.find_elements(By.XPATH, '//article[@data-testid="tweet"]')
-    for i in range(500):
+    for i in range(100_000):
         
         tweet = driver.find_element(By.XPATH, '//div[@data-testid="tweetText"]').text
         tweets.append(tweet)
@@ -125,8 +129,8 @@ if login():
         driver.execute_script('window.scrollTo(0,document.body.scrollHeight);')
         time.sleep(4)
 
-df = pd.DataFrame(zip(tweets),columns=['Tweets'])
-df.to_csv(r".\tweets_scrapping.csv",index=False)
+dataframe = pd.DataFrame(zip(tweets), columns = ['Tweets'])
+dataframe.to_csv(r".\tweets_scrapping.csv", inde = False)
 
 time.sleep(2)
 driver.quit()

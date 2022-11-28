@@ -4,7 +4,7 @@ import nltk
 
 def limpeza_dados(dataset):
 
-    df_limpo = []
+    dataframe_limpo = []
     auxiliar = " "
 
     for contador in range(len(dataset)):
@@ -24,11 +24,12 @@ def limpeza_dados(dataset):
             auxiliar = auxiliar.replace(caracter, ' ')
 
         # Inserção na lista limpa.
-        df_limpo.append(auxiliar)
+        dataframe_limpo.append(auxiliar)
         
-    return df_limpo
+    return dataframe_limpo
 
 def cria_df():
-    df = pd.read_csv('tweets_scrapping.csv')
-    dfString = df['Tweets'].values.tolist()
-    return limpeza_dados(dfString)
+
+    dataframe = pd.read_csv('tweets_scrapping.csv')
+    dataframe_string = dataframe['Tweets'].values.tolist()
+    return limpeza_dados(dataframe_string)

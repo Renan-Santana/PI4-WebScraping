@@ -29,7 +29,7 @@ def is_element_present(how, what):
 
 
 # Leitura dos dados do JSON.
-with open("credenciais.json", encoding='utf-8') as jsonCredenciais:
+with open("credenciais-exemplo.json", encoding='utf-8') as jsonCredenciais:
     credenciais = json.load(jsonCredenciais)
 
 # URL da página de login do Twitter.
@@ -107,23 +107,23 @@ def search(name):
         driver.find_element(By.XPATH, xPathSearchTwitter).send_keys(Keys.ENTER)
         time.sleep(2)
 
-        driver.find_element(By.XPATH, XPathLasted).click()
-        time.sleep(2)
+##        driver.find_element(By.XPATH, XPathLasted).click()
+#        time.sleep(5)
     except Exception as e:
         driver.quit()
         print(e)
     
 if login():
-    search('Eleições 2022 OR Eleições OR Eleicoes OR PT OR PL OR PDT OR Jair OR Bolsonaro OR Lula OR PDT OR Ciro OR MDB OR Simone OR Simone Tebet OR Tebet OR Padre Kelmon OR NOVO OR Felipe Avila')
+    search('Bolsonaro OR Lula OR Bolsonaro 22')
     
     articles = driver.find_elements(By.XPATH, '//article[@data-testid="tweet"]')
-    for i in range(100_000):
+    for i in range(500):
         
         tweet = driver.find_element(By.XPATH, '//div[@data-testid="tweetText"]').text
         tweets.append(tweet)
 
         driver.execute_script('window.scrollTo(0,document.body.scrollHeight);')
-        time.sleep(6)
+        time.sleep(4)
 
 df = pd.DataFrame(zip(tweets),columns=['Tweets'])
 df.to_csv(r".\tweets_scrapping.csv",index=False)
